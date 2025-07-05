@@ -398,8 +398,11 @@ const BulletinBoard: React.FC<BulletinBoardProps> = ({ onClose, user, initialSho
       setIsMaximized(false);
     } else {
       setPreMaximizeState({ size, position });
-      setSize({ width: window.innerWidth, height: window.innerHeight - TASKBAR_HEIGHT });
-      setPosition({ x: 0, y: TASKBAR_HEIGHT });
+      // 전체화면 모드에서는 작업 표시줄 높이를 고려하여 높이를 설정
+      // 너비는 화면 전체, 높이는 작업 표시줄을 제외한 영역
+      setSize({ width: window.innerWidth, height: window.innerHeight });
+      // 최대화 시에는 창을 화면 맨 위에 위치시킴 (y:0)
+      setPosition({ x: 0, y: 0 });
       setIsMaximized(true);
     }
   }, [isMaximized, preMaximizeState, size, position]);
@@ -793,16 +796,18 @@ const BulletinBoard: React.FC<BulletinBoardProps> = ({ onClose, user, initialSho
     <div
       ref={windowRef}
       style={{
-        position: 'absolute',
-        top: `${position.y}px`,
-        left: `${position.x}px`,
-        width: `${size.width}px`,
-        height: `${size.height}px`,
+        position: isMaximized ? 'fixed' : 'absolute',
+        top: isMaximized ? '0' : `${position.y}px`,
+        left: isMaximized ? '0' : `${position.x}px`,
+        width: isMaximized ? '100%' : `${size.width}px`,
+        height: isMaximized ? 'calc(100vh - 48px)' : `${size.height}px`,
         minWidth: `${minSize.width}px`,
         minHeight: `${minSize.height}px`,
         transition: isDragging || isResizing ? 'none' : 'width 0.2s ease, height 0.2s ease, top 0.2s ease, left 0.2s ease'
       }}
-      className={`bg-white/80 backdrop-blur-xl flex flex-col overflow-hidden ${isMaximized ? 'rounded-none shadow-none border-none' : 'rounded-xl shadow-win11-window border border-slate-200/80'}`}
+      className={`bg-white/80 backdrop-blur-xl flex flex-col overflow-hidden z-40 ${
+        isMaximized ? 'rounded-none shadow-none border-none right-0' : 'rounded-xl shadow-win11-window border border-slate-200/80'
+      }`}
     >
       <header
         onMouseDown={handleDragStart}
