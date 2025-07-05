@@ -3,7 +3,7 @@ import type { Post, UIPost, Category, Menu, MenuItem, User } from '../src/types'
 import Sidebar from './Sidebar';
 import PostList from './PostList';
 import PostDetail from './PostDetail';
-import TrafficLights from './TrafficLights';
+import WindowControls from './WindowControls';
 import NewPostModal from './NewPostModal';
 import WindowMenuBar from './WindowMenuBar';
 import ConfirmationModal from './ConfirmationModal';
@@ -19,12 +19,22 @@ const defaultCategories: Category[] = [
   { id: 'all', name: '모든 게시물', icon: <MessagesSquareIcon /> }
 ];
 
+/**
+ * 게시판 컴포넌트 속성
+ */
 interface BulletinBoardProps {
+    /** 창 닫기 핸들러 */
     onClose: () => void;
+    /** 사용자 정보 */
     user: User;
+    /** 초기 북마크 표시 여부 */
     initialShowBookmarks?: boolean;
 }
 
+/**
+ * 게시판 컴포넌트
+ * Windows 11 스타일의 게시판 창을 제공합니다.
+ */
 const BulletinBoard: React.FC<BulletinBoardProps> = ({ onClose, user, initialShowBookmarks = false }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -367,19 +377,18 @@ const BulletinBoard: React.FC<BulletinBoardProps> = ({ onClose, user, initialSho
 
   // 창 위치 초기화
   useEffect(() => {
-    const MENU_BAR_HEIGHT = 28; // Corresponds to h-7 in TailwindCSS
-    const availableHeight = window.innerHeight - MENU_BAR_HEIGHT;
+    const TASKBAR_HEIGHT = 48; // Windows 11 작업 표시줄 높이
     
     const initialX = Math.max(0, (window.innerWidth - size.width) / 2);
-    // Center vertically in the space below the menu bar
-    const initialY = MENU_BAR_HEIGHT + Math.max(0, (availableHeight - size.height) / 2);
+    // 작업 표시줄 위에 창을 배치
+    const initialY = Math.max(0, (window.innerHeight - TASKBAR_HEIGHT - size.height) / 2);
     
     setPosition({ x: initialX, y: initialY });
   }, []);
 
   // 창 최대화 처리
   const handleToggleMaximize = useCallback(() => {
-    const MENU_BAR_HEIGHT = 28; // Corresponds to h-7 in TailwindCSS
+    const TASKBAR_HEIGHT = 48; // Windows 11 작업 표시줄 높이
     if (isMaximized) {
       if (preMaximizeState) {
         setSize(preMaximizeState.size);
@@ -389,8 +398,8 @@ const BulletinBoard: React.FC<BulletinBoardProps> = ({ onClose, user, initialSho
       setIsMaximized(false);
     } else {
       setPreMaximizeState({ size, position });
-      setSize({ width: window.innerWidth, height: window.innerHeight - MENU_BAR_HEIGHT });
-      setPosition({ x: 0, y: MENU_BAR_HEIGHT });
+      setSize({ width: window.innerWidth, height: window.innerHeight - TASKBAR_HEIGHT });
+      setPosition({ x: 0, y: TASKBAR_HEIGHT });
       setIsMaximized(true);
     }
   }, [isMaximized, preMaximizeState, size, position]);
@@ -793,14 +802,18 @@ const BulletinBoard: React.FC<BulletinBoardProps> = ({ onClose, user, initialSho
         minHeight: `${minSize.height}px`,
         transition: isDragging || isResizing ? 'none' : 'width 0.2s ease, height 0.2s ease, top 0.2s ease, left 0.2s ease'
       }}
-      className={`bg-white/80 backdrop-blur-xl flex flex-col overflow-hidden ${isMaximized ? 'rounded-none shadow-none border-none' : 'rounded-xl shadow-2xl border border-slate-300/80'}`}
+      className={`bg-white/80 backdrop-blur-xl flex flex-col overflow-hidden ${isMaximized ? 'rounded-none shadow-none border-none' : 'rounded-xl shadow-win11-window border border-slate-200/80'}`}
     >
       <header
         onMouseDown={handleDragStart}
         onDoubleClick={handleToggleMaximize}
         className={`flex-shrink-0 h-14 flex items-center px-4 border-b border-slate-200/80 ${!isMaximized ? 'cursor-grab active:cursor-grabbing' : ''}`}
       >
-        <TrafficLights onClose={onClose} onMinimize={handleMinimize} onMaximize={handleToggleMaximize} />
+        <WindowControls 
+          onClose={onClose} 
+          onMaximize={handleToggleMaximize} 
+          isMaximized={isMaximized} 
+        />
         <div className="flex-grow text-center">
            <h1 className="font-semibold text-slate-700 select-none">
               {showBookmarks ? "북마크" : "게시판"}
@@ -810,7 +823,7 @@ const BulletinBoard: React.FC<BulletinBoardProps> = ({ onClose, user, initialSho
           {!user?.isAnonymous && (
             <button 
               onClick={handleToggleBookmarks}
-              className={`p-2 rounded-full transition-colors ${showBookmarks ? 'bg-blue-100 text-blue-600' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'}`}
+              className={`p-2 rounded-full transition-colors ${showBookmarks ? 'bg-win11-blue/10 text-win11-blue' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'}`}
               title={showBookmarks ? "모든 게시물 보기" : "북마크만 보기"}
             >
               <BookmarkIcon className="w-5 h-5" fill={showBookmarks ? "currentColor" : "none"} />
@@ -842,7 +855,7 @@ const BulletinBoard: React.FC<BulletinBoardProps> = ({ onClose, user, initialSho
               onSearch={(term) => setSearchTerm(term)}
             />
           </div>
-          <div className="flex-1 overflow-auto bg-slate-50">
+          <div className="flex-1 overflow-auto bg-slate-50/80">
             {selectedPost ? (
               <PostDetail 
                 post={selectedPost} 

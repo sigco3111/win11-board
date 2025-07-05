@@ -7,16 +7,23 @@ interface LoginScreenProps {
   onLogin: (user: User) => void;
 }
 
+/**
+ * 로그인 화면 컴포넌트
+ * Google 로그인 및 게스트 로그인 기능을 제공
+ * @param onLogin 로그인 성공 시 호출되는 콜백 함수
+ */
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   const [time, setTime] = useState(new Date());
   const { signInWithGoogle, signInAnonymously, isLoading, error, user } = useAuth();
   const [loginError, setLoginError] = useState<string | null>(null);
 
+  // 시계 업데이트를 위한 타이머 설정
   useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 30000); // Update every 30s
+    const timer = setInterval(() => setTime(new Date()), 30000); // 30초마다 업데이트
     return () => clearInterval(timer);
   }, []);
 
+  // 에러 메시지 표시 및 자동 제거 처리
   useEffect(() => {
     if (error) {
       setLoginError(error);
@@ -25,6 +32,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     }
   }, [error]);
 
+  // 사용자 로그인 상태 변경 감지 및 처리
   useEffect(() => {
     if (user) {
       console.log('사용자 로그인 감지:', user);
@@ -32,6 +40,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     }
   }, [user, onLogin]);
 
+  /**
+   * Google 로그인 처리 함수
+   * Google 계정을 통한 인증을 수행
+   */
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithGoogle();
@@ -44,15 +56,22 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     }
   };
   
+  /**
+   * 게스트 로그인 처리 함수
+   * 익명 인증을 통한 게스트 로그인을 수행
+   * 게스트 사용자는 제한된 기능만 사용 가능
+   */
   const handleGuestLogin = async () => {
     try {
       if (signInAnonymously) {
+        // Firebase 익명 인증 사용
         const result = await signInAnonymously();
         if (result) {
           console.log('게스트 로그인 성공:', result);
           onLogin(result);
         }
       } else {
+        // Firebase가 없는 경우 임시 게스트 사용자 생성
         const guestUser = {
           uid: 'guest-' + Math.random().toString(36).substring(2, 15),
           displayName: '게스트',
@@ -63,18 +82,20 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
       }
     } catch (err) {
       console.error('게스트 로그인 처리 중 오류:', err);
+      setLoginError(err instanceof Error ? err.message : '게스트 로그인 중 오류가 발생했습니다.');
     }
   };
 
   return (
     <div className="w-screen h-screen flex flex-col items-center justify-center bg-black/10 backdrop-blur-2xl">
+      {/* 상단 시계 */}
       <div className="fixed top-0 left-0 right-0 h-7 flex items-center justify-end px-4 text-sm font-semibold text-white" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
         <span>{time.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</span>
       </div>
 
       <div className="flex flex-col items-center space-y-10 text-center">
         <div className="flex items-center space-x-12">
-          {/* Google Login */}
+          {/* Google 로그인 버튼 */}
           <div className="flex flex-col items-center">
             <button 
               onClick={handleGoogleLogin} 
@@ -91,13 +112,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             <span className="text-white font-semibold text-lg" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>Google</span>
           </div>
           
-          {/* Guest Login */}
+          {/* 게스트 로그인 버튼 */}
           <div className="flex flex-col items-center">
              <button 
               onClick={handleGuestLogin} 
               className="w-24 h-24 rounded-full bg-slate-300 shadow-lg flex items-center justify-center mb-3 focus:outline-none focus:ring-4 focus:ring-slate-400/50 transition-transform transform hover:scale-105"
               aria-label="Login as Guest"
               disabled={isLoading}
+              title="게스트는 댓글 작성, 게시물 작성 등 일부 기능이 제한됩니다."
             >
               {isLoading ? (
                 <div className="w-12 h-12 border-4 border-slate-500 border-t-transparent rounded-full animate-spin"></div>
@@ -106,9 +128,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               )}
             </button>
             <span className="text-white font-semibold text-lg" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>게스트</span>
+            <span className="text-white/80 text-xs mt-1" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+              (기능 제한)
+            </span>
           </div>
         </div>
         
+        {/* 에러 메시지 */}
         {loginError && (
           <div className="bg-red-500/80 text-white px-6 py-3 rounded-lg shadow-lg">
             <p>{loginError}</p>
@@ -116,6 +142,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
         )}
       </div>
       
+      {/* 안내 메시지 */}
       <div className="absolute bottom-10 text-center text-white font-medium text-sm" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
         <p>프로필을 선택하여 로그인하세요.</p>
       </div>

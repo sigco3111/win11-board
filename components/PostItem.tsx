@@ -1,15 +1,28 @@
+/**
+ * 게시물 항목 컴포넌트
+ * Windows 11 스타일의 게시물 항목을 표시합니다.
+ */
 import React, { useEffect } from 'react';
 import type { UIPost } from '../src/types';
 import { useAuth } from '../src/hooks/useAuth';
 import { useBookmarks } from '../src/hooks/useBookmarks';
 import { MessagesSquareIcon, BookmarkIcon } from './icons';
 
+/**
+ * 게시물 항목 컴포넌트 속성
+ */
 interface PostItemProps {
+  /** 표시할 게시물 */
   post: UIPost;
+  /** 선택 여부 */
   isSelected: boolean;
+  /** 클릭 핸들러 */
   onClick: () => void;
 }
 
+/**
+ * 게시물 항목 컴포넌트
+ */
 const PostItem: React.FC<PostItemProps> = ({ post, isSelected, onClick }) => {
   // 인증 정보 가져오기
   const { user } = useAuth();
@@ -56,8 +69,8 @@ const PostItem: React.FC<PostItemProps> = ({ post, isSelected, onClick }) => {
   return (
     <li
       onClick={onClick}
-      className={`py-2 px-3 border-b border-slate-200 cursor-pointer transition-colors duration-150 ${
-        isSelected ? 'bg-blue-100/70' : 'hover:bg-slate-50'
+      className={`py-2.5 px-3.5 border-b border-slate-200/80 cursor-pointer transition-colors duration-150 ${
+        isSelected ? 'bg-win11-blue/10' : 'hover:bg-slate-50/80'
       }`}
     >
       <div className="grid grid-cols-10 gap-2 w-full items-center">
@@ -76,8 +89,8 @@ const PostItem: React.FC<PostItemProps> = ({ post, isSelected, onClick }) => {
         {/* 제목 및 작성자 (6/10) */}
         <div className="col-span-6 min-w-0 overflow-hidden pr-1">
           <div className="flex items-center">
-            <p className={`font-medium text-xs ${isSelected ? 'text-blue-800' : 'text-slate-600'} truncate mr-2`}>{post.author.name}</p>
-            {post.isNew && <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></span>}
+            <p className={`font-medium text-xs ${isSelected ? 'text-win11-blue' : 'text-slate-600'} truncate mr-2`}>{post.author.name}</p>
+            {post.isNew && <span className="w-2 h-2 bg-win11-blue rounded-full flex-shrink-0"></span>}
           </div>
           <h3 className={`font-bold text-sm truncate ${isSelected ? 'text-slate-900' : 'text-slate-900'}`}>{post.title}</h3>
         </div>
@@ -91,13 +104,13 @@ const PostItem: React.FC<PostItemProps> = ({ post, isSelected, onClick }) => {
                 <span>{post.comments}</span>
               </div>
             )}
-            <span className="whitespace-nowrap text-blue-600 font-medium">{formatDate(post.date)}</span>
+            <span className="whitespace-nowrap text-win11-blue font-medium">{formatDate(post.date)}</span>
           </div>
           <div className="flex items-center mt-1 justify-end">
             {user && !user.isAnonymous && (
               <button 
                 onClick={handleBookmarkToggle}
-                className={`transition-colors ${isBookmarked(post.id) ? 'text-blue-500' : 'text-slate-400 hover:text-blue-500'}`}
+                className={`transition-colors ${isBookmarked(post.id) ? 'text-win11-blue' : 'text-slate-400 hover:text-win11-blue'}`}
                 title={isBookmarked(post.id) ? "북마크 해제" : "북마크 추가"}
               >
                 <BookmarkIcon className="w-4 h-4" fill={bookmarkFill} />

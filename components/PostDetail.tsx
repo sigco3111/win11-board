@@ -1,3 +1,7 @@
+/**
+ * 게시물 상세 컴포넌트
+ * Windows 11 스타일의 게시물 상세 정보를 표시합니다.
+ */
 import React from 'react';
 import type { UIPost } from '../src/types';
 import { MessagesSquareIcon, HashtagIcon, PencilIcon, TrashIcon } from './icons';
@@ -7,18 +11,31 @@ import rehypeSanitize from 'rehype-sanitize';
 import remarkGfm from 'remark-gfm';
 import CommentSection from './CommentSection';
 
+/**
+ * 게시물 상세 컴포넌트 속성
+ */
 interface PostDetailProps {
+  /** 표시할 게시물 */
   post: UIPost | null;
+  /** 태그 선택 핸들러 */
   onSelectTag: (tag: string | null) => void;
-  onEditPost?: (post: UIPost) => void; // 게시물 객체를 매개변수로 전달
+  /** 게시물 수정 핸들러 */
+  onEditPost?: (post: UIPost) => void;
+  /** 게시물 삭제 핸들러 */
   onDeletePost?: () => void;
-  // 추가 props
+  /** 현재 사용자가 게시물 작성자인지 여부 */
   isPostOwner?: boolean;
+  /** 게시물 새로고침 핸들러 */
   onRefresh?: () => void;
+  /** 현재 사용자 ID */
   userId?: string;
+  /** 카테고리 목록 */
   categories?: any[];
 }
 
+/**
+ * 게시물 상세 컴포넌트
+ */
 const PostDetail: React.FC<PostDetailProps> = ({ 
   post, 
   onSelectTag, 
@@ -41,7 +58,7 @@ const PostDetail: React.FC<PostDetailProps> = ({
 
   if (!post) {
     return (
-      <div className="flex-grow flex items-center justify-center bg-slate-50 text-slate-500">
+      <div className="flex-grow flex items-center justify-center bg-slate-50/80 backdrop-blur-sm text-slate-500">
         <div className="text-center">
             <MessagesSquareIcon className="mx-auto w-16 h-16 text-slate-300" />
             <p className="mt-2 text-lg">게시물을 선택하여 여기에서 보세요.</p>
@@ -56,8 +73,8 @@ const PostDetail: React.FC<PostDetailProps> = ({
     : defaultAvatar;
 
   return (
-    <div className="flex-grow bg-slate-50 flex flex-col h-full overflow-hidden">
-      <div className="p-6 border-b border-slate-200">
+    <div className="flex-grow bg-slate-50/80 backdrop-blur-sm flex flex-col h-full overflow-hidden">
+      <div className="p-6 border-b border-slate-200/80">
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">{post.title}</h1>
@@ -76,14 +93,14 @@ const PostDetail: React.FC<PostDetailProps> = ({
               <div className="flex space-x-2">
                 <button 
                   onClick={() => post && onEditPost(post)}
-                  className="p-1.5 rounded-full text-slate-600 hover:bg-slate-200 transition-colors"
+                  className="p-1.5 rounded-full text-slate-600 hover:bg-slate-200/80 transition-colors"
                   title="게시물 수정"
                 >
                   <PencilIcon className="w-5 h-5" />
                 </button>
                 <button 
                   onClick={onDeletePost}
-                  className="p-1.5 rounded-full text-slate-600 hover:bg-slate-200 transition-colors"
+                  className="p-1.5 rounded-full text-slate-600 hover:bg-slate-200/80 transition-colors"
                   title="게시물 삭제"
                 >
                   <TrashIcon className="w-5 h-5" />
@@ -111,7 +128,7 @@ const PostDetail: React.FC<PostDetailProps> = ({
       </div>
       <div className="overflow-y-auto flex-grow">
         <div className="p-6">
-          <div className="prose prose-slate prose-headings:font-bold prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-code:bg-slate-100 prose-code:text-slate-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-slate-800 prose-pre:text-slate-100 max-w-none">
+          <div className="prose prose-slate prose-headings:font-bold prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-win11-blue prose-a:no-underline hover:prose-a:underline prose-code:bg-slate-100/80 prose-code:text-slate-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded-win11 prose-pre:bg-slate-800 prose-pre:text-slate-100 prose-pre:rounded-win11 max-w-none">
             <ReactMarkdown 
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeSanitize]}
@@ -122,14 +139,14 @@ const PostDetail: React.FC<PostDetailProps> = ({
                 ),
                 // 이미지 스타일 적용
                 img: ({ node, ...props }) => (
-                  <img {...props} className="rounded-md shadow-sm" />
+                  <img {...props} className="rounded-win11 shadow-sm" />
                 ),
                 // 코드 블록 스타일 적용
                 code: ({ node, className, children, ...props }: any) => {
                   const match = /language-(\w+)/.exec(className || '');
                   const isInline = !match && !className;
                   return isInline ? (
-                    <code className="text-sm bg-slate-100 text-slate-800 px-1 py-0.5 rounded" {...props}>
+                    <code className="text-sm bg-slate-100/80 text-slate-800 px-1 py-0.5 rounded-win11" {...props}>
                       {children}
                     </code>
                   ) : (
@@ -144,12 +161,12 @@ const PostDetail: React.FC<PostDetailProps> = ({
             </ReactMarkdown>
           </div>
            {post.tags && post.tags.length > 0 && (
-            <div className="mt-8 pt-4 border-t border-slate-200 flex items-center flex-wrap gap-2">
+            <div className="mt-8 pt-4 border-t border-slate-200/80 flex items-center flex-wrap gap-2">
               {post.tags.map(tag => (
                 <button
                   key={tag}
                   onClick={() => onSelectTag(tag)}
-                  className="flex items-center space-x-1.5 bg-blue-100 text-blue-700 hover:bg-blue-200 text-xs font-semibold px-2.5 py-1 rounded-full transition-colors"
+                  className="flex items-center space-x-1.5 bg-win11-blue/10 text-win11-blue hover:bg-win11-blue/20 text-xs font-semibold px-2.5 py-1 rounded-full transition-colors"
                 >
                   <HashtagIcon className="w-3 h-3" />
                   <span>{tag}</span>
