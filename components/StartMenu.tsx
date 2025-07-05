@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import { SearchIcon } from './icons';
 import type { User } from '../types';
 
 interface StartMenuProps {
@@ -28,27 +27,15 @@ const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, user, onLogout }
   // 시작 메뉴가 닫혀있으면 렌더링하지 않음
   if (!isOpen) return null;
 
-  // 핀된 앱 목록
+  // 고정됨 앱 목록 (기능 있는 것만 유지)
   const pinnedApps = [
     { name: '게시판', icon: '📝', color: 'bg-blue-100' },
-    { name: '파일 탐색기', icon: '📁', color: 'bg-yellow-100' },
     { name: '설정', icon: '⚙️', color: 'bg-gray-100' },
-    { name: '사진', icon: '🖼️', color: 'bg-green-100' },
-    { name: '메일', icon: '✉️', color: 'bg-purple-100' },
-    { name: '계산기', icon: '🧮', color: 'bg-red-100' },
-    { name: '캘린더', icon: '📅', color: 'bg-orange-100' },
-    { name: '메모장', icon: '📓', color: 'bg-teal-100' },
-    { name: '날씨', icon: '🌤️', color: 'bg-cyan-100' },
-    { name: '음악', icon: '🎵', color: 'bg-pink-100' },
-    { name: '스토어', icon: '🛒', color: 'bg-indigo-100' },
-    { name: '알람', icon: '⏰', color: 'bg-amber-100' },
   ];
 
-  // 추천 항목 목록
+  // 추천 항목 목록 (기능 있는 것만 유지)
   const recommendedItems = [
-    { name: '최근 게시물', icon: '📄', time: '방금 전' },
     { name: '설정', icon: '⚙️', time: '1시간 전' },
-    { name: '알림 센터', icon: '🔔', time: '3시간 전' },
     { name: '도움말', icon: '❓', time: '어제' },
   ];
 
@@ -58,19 +45,8 @@ const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, user, onLogout }
       className="absolute bottom-12 left-1/2 -translate-x-1/2 w-[640px] bg-win11-window backdrop-blur-win11 rounded-win11-lg shadow-win11-dropdown border border-win11-border z-50 overflow-hidden"
     >
       <div className="p-6">
-        {/* 상단 영역: 검색 및 사용자 정보 */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="relative w-96">
-            <input 
-              type="text" 
-              placeholder="검색" 
-              className="w-full h-10 pl-10 pr-4 rounded-win11 bg-white/80 border border-win11-border focus:outline-none focus:border-win11-blue"
-            />
-            <div className="absolute left-3 top-1/2 -translate-y-1/2">
-              <SearchIcon className="w-4 h-4 text-gray-500" />
-            </div>
-          </div>
-          
+        {/* 상단 영역: 사용자 정보 */}
+        <div className="flex justify-end items-center mb-6">
           <div className="flex items-center">
             <div 
               className="w-8 h-8 rounded-full bg-win11-blue flex items-center justify-center text-white mr-2"
@@ -91,9 +67,9 @@ const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, user, onLogout }
           </div>
         </div>
         
-        {/* 핀된 앱 섹션 */}
+        {/* 고정됨 앱 섹션 */}
         <div className="mb-6">
-          <h3 className="text-sm font-medium mb-2">핀된 앱</h3>
+          <h3 className="text-sm font-medium mb-2">고정됨</h3>
           <div className="grid grid-cols-6 gap-2">
             {pinnedApps.map((app, index) => (
               <button 

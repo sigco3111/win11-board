@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { User } from '../types';
-import { SearchIcon } from './icons';
+import { FolderIcon, SettingsIcon } from './icons';
 
 interface TaskbarProps {
   onOpenHelp: () => void;
@@ -8,6 +8,9 @@ interface TaskbarProps {
   user: User;
   onStartMenuToggle: () => void;
   isStartMenuOpen: boolean;
+  onOpenBoard: () => void;
+  onOpenBookmarks: () => void;
+  onOpenSettings: () => void;
 }
 
 const Taskbar: React.FC<TaskbarProps> = ({ 
@@ -15,7 +18,10 @@ const Taskbar: React.FC<TaskbarProps> = ({
   onLogout, 
   user, 
   onStartMenuToggle,
-  isStartMenuOpen
+  isStartMenuOpen,
+  onOpenBoard,
+  onOpenBookmarks,
+  onOpenSettings
 }) => {
   const [time, setTime] = useState(new Date());
   const [date, setDate] = useState('');
@@ -45,23 +51,13 @@ const Taskbar: React.FC<TaskbarProps> = ({
     };
   }, []);
 
-  // 앱 아이콘 목록
-  const appIcons = [
-    { name: '파일 탐색기', icon: '📁' },
-    { name: '게시판', icon: '📝' },
-    { name: '설정', icon: '⚙️' },
-    { name: '브라우저', icon: '🌐' },
-    { name: '메일', icon: '✉️' },
-    { name: '사진', icon: '🖼️' },
-  ];
-
   return (
     <div 
       ref={taskbarRef}
       className="fixed bottom-0 left-0 right-0 h-12 bg-win11-taskbar backdrop-blur-win11 z-50 shadow-win11-taskbar flex items-center justify-between px-2"
     >
-      {/* 시작 버튼 및 앱 아이콘 영역 - 중앙 정렬 */}
-      <div className="flex-1 flex items-center justify-center space-x-1">
+      {/* 시작 버튼 영역 - 중앙 정렬 */}
+      <div className="flex-1 flex items-center justify-center space-x-2">
         {/* 시작 버튼 */}
         <button 
           onClick={onStartMenuToggle}
@@ -75,25 +71,42 @@ const Taskbar: React.FC<TaskbarProps> = ({
             <path d="M9.5 9.5H18V18H9.5V9.5Z" fill="#0078D4" />
           </svg>
         </button>
-
-        {/* 검색 버튼 */}
+        
+        {/* 게시판 아이콘 */}
         <button 
-          className="p-1.5 rounded-md hover:bg-white/10 transition-colors"
-          aria-label="검색"
+          onClick={onOpenBoard}
+          className="p-1.5 rounded-md hover:bg-white/10 transition-colors flex items-center justify-center"
+          aria-label="게시판"
+          title="게시판"
         >
-          <SearchIcon className="w-5 h-5 text-white" />
+          <div className="text-white">
+            <FolderIcon className="w-5 h-5" />
+          </div>
         </button>
-
-        {/* 앱 아이콘들 */}
-        {appIcons.map((app, index) => (
-          <button 
-            key={index}
-            className="p-1.5 rounded-md hover:bg-white/10 transition-colors text-xl"
-            aria-label={app.name}
-          >
-            {app.icon}
-          </button>
-        ))}
+        
+        {/* 북마크 아이콘 */}
+        <button 
+          onClick={onOpenBookmarks}
+          className="p-1.5 rounded-md hover:bg-white/10 transition-colors flex items-center justify-center"
+          aria-label="북마크"
+          title="북마크"
+        >
+          <div className="text-white">
+            <FolderIcon className="w-5 h-5" />
+          </div>
+        </button>
+        
+        {/* 설정 아이콘 */}
+        <button 
+          onClick={onOpenSettings}
+          className="p-1.5 rounded-md hover:bg-white/10 transition-colors flex items-center justify-center"
+          aria-label="설정"
+          title="설정"
+        >
+          <div className="text-white">
+            <SettingsIcon className="w-5 h-5" />
+          </div>
+        </button>
       </div>
 
       {/* 시스템 트레이 영역 - 우측 정렬 */}
@@ -108,16 +121,6 @@ const Taskbar: React.FC<TaskbarProps> = ({
             <path d="M8 16C9.1 16 10 15.1 10 14H6C6 15.1 6.9 16 8 16ZM14 11V6.5C14 4.01 12.42 1.92 10 1.18V0.5C10 0.22 9.78 0 9.5 0H6.5C6.22 0 6 0.22 6 0.5V1.18C3.58 1.92 2 4.01 2 6.5V11L0 13V14H16V13L14 11Z" fill="currentColor"/>
           </svg>
         </button>
-
-        {/* 사용자 정보 */}
-        <div className="flex items-center space-x-1 px-2">
-          <button 
-            className="w-6 h-6 rounded-full bg-win11-blue flex items-center justify-center text-xs text-white hover:bg-blue-600 transition-colors"
-            title="사용자 정보"
-          >
-            {user.displayName.charAt(0).toUpperCase()}
-          </button>
-        </div>
 
         {/* 날짜/시간 */}
         <div className="flex flex-col items-end pr-2">

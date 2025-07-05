@@ -100,6 +100,21 @@ const Desktop: React.FC<DesktopProps> = ({ user, onOpenBoard, onLogout }) => {
     setStartMenuOpen(!isStartMenuOpen);
   };
 
+  // 게시판 열기 핸들러
+  const handleOpenBoard = () => {
+    setBoardState('board');
+  };
+
+  // 북마크 열기 핸들러
+  const handleOpenBookmarks = () => {
+    setBoardState('bookmarks');
+  };
+
+  // 설정 열기 핸들러
+  const handleOpenSettings = () => {
+    setSettingsModalOpen(true);
+  };
+
   useEffect(() => {
     const checkLogoutFlag = () => {
       if (localStorage.getItem(LOGOUT_FLAG_KEY) === 'true') {
@@ -158,6 +173,9 @@ const Desktop: React.FC<DesktopProps> = ({ user, onOpenBoard, onLogout }) => {
         user={user}
         onStartMenuToggle={handleStartMenuToggle}
         isStartMenuOpen={isStartMenuOpen}
+        onOpenBoard={handleOpenBoard}
+        onOpenBookmarks={handleOpenBookmarks}
+        onOpenSettings={handleOpenSettings}
       />
 
       {/* 시작 메뉴 */}
