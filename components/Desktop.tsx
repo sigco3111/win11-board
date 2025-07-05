@@ -184,6 +184,10 @@ const Desktop: React.FC<DesktopProps> = ({ user, onOpenBoard, onLogout }) => {
         onClose={() => setStartMenuOpen(false)}
         user={user}
         onLogout={handleLogout}
+        onOpenBoard={handleOpenBoard}
+        onOpenSettings={handleOpenSettings}
+        onOpenHelp={() => setHelpModalOpen(true)}
+        onOpenBookmarks={handleOpenBookmarks}
       />
 
       {/* 모달 컴포넌트들 */}

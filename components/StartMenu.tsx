@@ -6,9 +6,22 @@ interface StartMenuProps {
   onClose: () => void;
   user: User;
   onLogout: () => void;
+  onOpenBoard: () => void;
+  onOpenSettings: () => void;
+  onOpenHelp: () => void;
+  onOpenBookmarks: () => void;
 }
 
-const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, user, onLogout }) => {
+const StartMenu: React.FC<StartMenuProps> = ({ 
+  isOpen, 
+  onClose, 
+  user, 
+  onLogout,
+  onOpenBoard,
+  onOpenSettings,
+  onOpenHelp,
+  onOpenBookmarks
+}) => {
   const menuRef = useRef<HTMLDivElement>(null);
 
   // 외부 클릭 감지
@@ -24,19 +37,25 @@ const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, user, onLogout }
     };
   }, [isOpen, onClose]);
 
+  // 메뉴 항목 클릭 핸들러 - 기능 실행 후 시작 메뉴 닫기
+  const handleMenuItemClick = (action: () => void) => {
+    action();
+    onClose();
+  };
+
   // 시작 메뉴가 닫혀있으면 렌더링하지 않음
   if (!isOpen) return null;
 
   // 고정됨 앱 목록 (기능 있는 것만 유지)
   const pinnedApps = [
-    { name: '게시판', icon: '📝', color: 'bg-blue-100' },
-    { name: '설정', icon: '⚙️', color: 'bg-gray-100' },
+    { name: '게시판', icon: '📝', color: 'bg-blue-100', onClick: onOpenBoard },
+    { name: '북마크', icon: '🔖', color: 'bg-yellow-100', onClick: onOpenBookmarks },
   ];
 
   // 추천 항목 목록 (기능 있는 것만 유지)
   const recommendedItems = [
-    { name: '설정', icon: '⚙️', time: '1시간 전' },
-    { name: '도움말', icon: '❓', time: '어제' },
+    { name: '설정', icon: '⚙️', time: '1시간 전', onClick: onOpenSettings },
+    { name: '도움말', icon: '❓', time: '어제', onClick: onOpenHelp },
   ];
 
   return (
@@ -74,6 +93,7 @@ const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, user, onLogout }
             {pinnedApps.map((app, index) => (
               <button 
                 key={index} 
+                onClick={() => handleMenuItemClick(app.onClick)}
                 className="flex flex-col items-center p-2 rounded-win11 hover:bg-white/50 transition-colors"
               >
                 <div className={`w-10 h-10 ${app.color} rounded-win11 flex items-center justify-center text-2xl mb-1`}>
@@ -91,7 +111,8 @@ const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, user, onLogout }
           <div className="grid grid-cols-2 gap-2">
             {recommendedItems.map((item, index) => (
               <div 
-                key={index} 
+                key={index}
+                onClick={() => handleMenuItemClick(item.onClick)}
                 className="flex items-center p-2 rounded-win11 hover:bg-white/50 transition-colors cursor-pointer"
               >
                 <div className="w-10 h-10 bg-gray-100 rounded-win11 flex items-center justify-center text-xl mr-3">
