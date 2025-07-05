@@ -1,19 +1,19 @@
 /**
  * 설정 모달 컴포넌트
- * 바탕화면 배경 및 기타 시스템 설정을 변경할 수 있는 모달 창입니다.
+ * Windows 11 스타일의 설정 창을 제공합니다.
  */
 import React, { useState, useEffect, useRef } from 'react';
-import TrafficLights from './TrafficLights';
+import WindowControls from './WindowControls';
 import Dashboard from './Dashboard';
 
 // 기본 배경화면 경로
 const DEFAULT_WALLPAPER = '/assets/wallpapers/default.jpg';
 // 대체 배경색
-const FALLBACK_BG_COLOR = '#1E3A8A'; // 짙은 파란색
+const FALLBACK_BG_COLOR = '#0078D4'; // Windows 11 기본 파란색
 
 // 로컬 스토리지 키
-const WALLPAPER_KEY = 'mac_board_wallpaper';
-const WALLPAPER_TYPE_KEY = 'mac_board_wallpaper_type';
+const WALLPAPER_KEY = 'win11_board_wallpaper';
+const WALLPAPER_TYPE_KEY = 'win11_board_wallpaper_type';
 
 /**
  * 설정 모달 컴포넌트 속성
@@ -52,6 +52,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   });
   const [defaultImageError, setDefaultImageError] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isMaximized, setIsMaximized] = useState(false);
 
   // 기본 이미지 로딩 오류 감지
   useEffect(() => {
@@ -129,6 +130,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     fileInputRef.current?.click();
   };
 
+  // 창 최대화/복원 핸들러
+  const handleToggleMaximize = () => {
+    setIsMaximized(!isMaximized);
+  };
+
   // 배경화면 미리보기 스타일 결정
   const previewBgStyle = defaultImageError || (wallpaperUrl === DEFAULT_WALLPAPER && defaultImageError) ? 
     { backgroundColor: FALLBACK_BG_COLOR } : 
@@ -145,9 +151,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         <h3 className="text-lg font-semibold">바탕화면 배경</h3>
         
         {/* 현재 배경화면 미리보기 */}
-        <div className="bg-gray-100 rounded-md p-2">
+        <div className="bg-gray-100/50 rounded-win11 p-2">
           <div 
-            className="w-full h-36 rounded-md bg-cover bg-center"
+            className="w-full h-36 rounded-win11 bg-cover bg-center"
             style={previewBgStyle}
           ></div>
         </div>
@@ -156,14 +162,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         <div className="flex flex-col space-y-2">
           <button
             onClick={handleOpenFileDialog}
-            className="bg-mac-blue text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+            className="bg-win11-blue text-white py-2 px-4 rounded-win11 hover:bg-blue-600 transition-colors"
           >
             배경화면 이미지 선택
           </button>
           
           <button
             onClick={handleResetWallpaper}
-            className="border border-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-100 transition-colors"
+            className="border border-gray-300 text-gray-700 py-2 px-4 rounded-win11 hover:bg-gray-100 transition-colors"
           >
             기본 배경화면으로 초기화
           </button>
@@ -203,40 +209,47 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   return isOpen ? (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/30">
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 backdrop-blur-sm">
       <div 
-        className="bg-white/90 backdrop-blur-lg rounded-lg shadow-mac-window w-full max-w-lg overflow-hidden"
+        className={`bg-white/80 backdrop-blur-xl flex flex-col overflow-hidden
+          ${isMaximized ? 'w-full h-full rounded-none' : 'w-full max-w-lg m-4 rounded-xl shadow-win11-window border border-slate-200/80'}`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 창 상단바 */}
-        <div className="flex items-center justify-between p-3 bg-gray-100/80 border-b border-gray-200">
-          <div className="flex items-center space-x-2">
-            <TrafficLights onClose={onClose} />
+        {/* 헤더 */}
+        <div className="flex-shrink-0 h-14 flex items-center px-4 border-b border-slate-200/80">
+          <WindowControls 
+            onClose={onClose} 
+            onMaximize={handleToggleMaximize} 
+            isMaximized={isMaximized} 
+          />
+          <div className="flex-grow text-center">
+            <h2 className="font-semibold text-slate-700 select-none">
+              설정
+            </h2>
           </div>
-          <div className="text-center font-semibold">시스템 설정</div>
-          <div className="w-14"></div>
+          <div className="w-16"></div>
         </div>
         
         {/* 설정 내용 */}
-        <div className="flex h-[500px]">
+        <div className="flex flex-grow overflow-hidden">
           {/* 사이드바 */}
-          <div className="w-36 border-r border-gray-200 p-2 space-y-1">
+          <div className="w-36 border-r border-slate-200/80 p-2 space-y-1 bg-white/50">
             <button
               onClick={() => setActiveTab('wallpaper')}
-              className={`w-full text-left px-2 py-1 rounded-md text-sm ${
+              className={`w-full text-left px-3 py-2 rounded-win11 text-sm transition-colors ${
                 activeTab === 'wallpaper' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'hover:bg-gray-100 text-gray-800'
+                  ? 'bg-win11-blue text-white' 
+                  : 'hover:bg-slate-100 text-slate-800'
               }`}
             >
               바탕화면
             </button>
             <button
               onClick={() => setActiveTab('dashboard')}
-              className={`w-full text-left px-2 py-1 rounded-md text-sm ${
+              className={`w-full text-left px-3 py-2 rounded-win11 text-sm transition-colors ${
                 activeTab === 'dashboard' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'hover:bg-gray-100 text-gray-800'
+                  ? 'bg-win11-blue text-white' 
+                  : 'hover:bg-slate-100 text-slate-800'
               }`}
             >
               대시보드
@@ -244,7 +257,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
           
           {/* 내용 영역 */}
-          <div className="flex-1 p-3 overflow-y-auto">
+          <div className="flex-1 p-4 overflow-y-auto">
             {activeTab === 'wallpaper' ? renderWallpaperTab() : renderDashboardTab()}
           </div>
         </div>
