@@ -86,102 +86,145 @@
 
 @layer base {
   html {
-    font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Helvetica Neue', sans-serif;
+    font-family: 'Segoe UI', 'Segoe UI Variable', system-ui, sans-serif;
   }
   
   body {
-    background-color: var(--mac-light-color);
-    color: var(--mac-dark-color);
+    background-color: var(--win11-light-color);
+    color: var(--win11-dark-color);
     margin: 0;
     padding: 0;
     overflow: hidden;
   }
 
   :root {
-    --mac-blue-color: #0070c9;
-    --mac-gray-color: #f5f5f7;
-    --mac-dark-color: #1d1d1f;
-    --mac-light-color: #fbfbfd;
-    --mac-border-color: #d2d2d7;
-    --mac-window-color: rgba(255, 255, 255, 0.8);
-    --mac-sidebar-color: #f9f9f9;
+    --win11-blue-color: #0078d4;
+    --win11-light-blue-color: #50e6ff;
+    --win11-gray-color: #f3f3f3;
+    --win11-dark-color: #202020;
+    --win11-light-color: #ffffff;
+    --win11-border-color: #e6e6e6;
+    --win11-window-color: rgba(255, 255, 255, 0.7);
+    --win11-sidebar-color: #fafafa;
+    --win11-accent-color: #0078d4;
+    --win11-taskbar-color: rgba(243, 243, 243, 0.85);
+    --win11-start-color: rgba(243, 243, 243, 0.9);
+    
+    /* Windows 11 Mica/Acrylic 효과 관련 변수 */
+    --win11-mica-opacity: 0.8;
+    --win11-acrylic-opacity: 0.7;
+    --win11-backdrop-blur: 30px;
+    
+    /* Windows 11 기본 테두리 반경 */
+    --win11-border-radius: 8px;
+    --win11-border-radius-lg: 12px;
+    --win11-border-radius-xl: 16px;
   }
 }
 
 @layer components {
-  .bg-mac-light {
-    background-color: var(--mac-light-color);
+  .bg-win11-light {
+    background-color: var(--win11-light-color);
   }
   
-  .bg-mac-window {
-    background-color: var(--mac-window-color);
+  .bg-win11-window {
+    background-color: var(--win11-window-color);
   }
   
-  .text-mac-dark {
-    color: var(--mac-dark-color);
+  .text-win11-dark {
+    color: var(--win11-dark-color);
   }
   
-  .bg-mac-blue {
-    background-color: var(--mac-blue-color);
+  .bg-win11-blue {
+    background-color: var(--win11-blue-color);
   }
   
-  .text-mac-blue {
-    color: var(--mac-blue-color);
+  .text-win11-blue {
+    color: var(--win11-blue-color);
   }
   
-  .border-mac-border {
-    border-color: var(--mac-border-color);
+  .border-win11-border {
+    border-color: var(--win11-border-color);
   }
   
-  .bg-mac-gray {
-    background-color: var(--mac-gray-color);
+  .bg-win11-gray {
+    background-color: var(--win11-gray-color);
   }
   
-  .bg-mac-sidebar {
-    background-color: var(--mac-sidebar-color);
+  .bg-win11-sidebar {
+    background-color: var(--win11-sidebar-color);
+  }
+  
+  .bg-win11-taskbar {
+    background-color: var(--win11-taskbar-color);
+  }
+  
+  .bg-win11-start {
+    background-color: var(--win11-start-color);
   }
 
-  .mac-window {
-    background-color: var(--mac-window-color);
-    backdrop-filter: blur(20px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border-radius: 0.5rem;
-    border: 1px solid var(--mac-border-color);
+  /* Windows 11 스타일 창 */
+  .win11-window {
+    background-color: var(--win11-window-color);
+    backdrop-filter: blur(var(--win11-backdrop-blur));
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-radius: var(--win11-border-radius-lg);
+    border: 1px solid var(--win11-border-color);
     overflow: hidden;
   }
   
-  .mac-button {
+  /* Windows 11 스타일 버튼 */
+  .win11-button {
     padding-left: 1rem;
     padding-right: 1rem;
-    padding-top: 0.375rem;
-    padding-bottom: 0.375rem;
-    border-radius: 0.375rem;
-    background-color: var(--mac-blue-color);
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-radius: var(--win11-border-radius);
+    background-color: var(--win11-blue-color);
     color: white;
     font-weight: 500;
-    transition-property: opacity;
+    transition-property: background-color;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 150ms;
   }
   
-  .mac-button:hover {
-    opacity: 0.9;
+  .win11-button:hover {
+    background-color: #0067b8;
   }
   
-  .mac-input {
+  /* Windows 11 스타일 입력 필드 */
+  .win11-input {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
-    border-radius: 0.375rem;
-    border: 1px solid var(--mac-border-color);
+    border-radius: var(--win11-border-radius);
+    border: 1px solid var(--win11-border-color);
   }
   
-  .mac-input:focus {
+  .win11-input:focus {
     outline: none;
-    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-    --tw-ring-color: var(--mac-blue-color);
+    border-color: var(--win11-blue-color);
+    box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+  }
+  
+  /* Windows 11 Mica 효과 */
+  .win11-mica {
+    background-color: rgba(255, 255, 255, var(--win11-mica-opacity));
+    backdrop-filter: blur(var(--win11-backdrop-blur));
+  }
+  
+  /* Windows 11 Acrylic 효과 */
+  .win11-acrylic {
+    background-color: rgba(255, 255, 255, var(--win11-acrylic-opacity));
+    backdrop-filter: blur(var(--win11-backdrop-blur));
+  }
+  
+  /* Windows 11 카드 컴포넌트 */
+  .win11-card {
+    background-color: var(--win11-light-color);
+    border-radius: var(--win11-border-radius);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    padding: 1rem;
   }
 } 
