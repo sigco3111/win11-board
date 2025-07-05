@@ -1,8 +1,8 @@
-# MAC-BOARD 프로젝트 구조
+# WIN11-BOARD 프로젝트 구조
 
 ## 1. 프로젝트 개요
 
-MAC-BOARD는 Mac OS 인터페이스를 모방한 온라인 게시판 시스템입니다. React, TypeScript, Tailwind CSS, Firebase를 사용하여 구현되었으며, 게시물 CRUD, 구글 및 익명 로그인, 마크다운 지원, 북마크 시스템, 반응형 디자인 등의 기능을 제공합니다.
+WIN11-BOARD는 Windows 11 인터페이스를 모방한 온라인 게시판 시스템입니다. React, TypeScript, Tailwind CSS, Firebase를 사용하여 구현되었으며, 게시물 CRUD, 구글 및 익명 로그인, 마크다운 지원, 북마크 시스템, 반응형 디자인 등의 기능을 제공합니다.
 
 ## 2. 디렉토리 구조
 
@@ -56,13 +56,13 @@ components/
 ├── Desktop.tsx          # 바탕화면 컴포넌트
 ├── HelpModal.tsx        # 도움말 모달
 ├── LoginScreen.tsx      # 로그인 화면
-├── MenuBar.tsx          # 메뉴 바 컴포넌트
+├── Taskbar.tsx          # 작업 표시줄 컴포넌트
 ├── NewPostModal.tsx     # 새 게시물 작성 모달
 ├── PostDetail.tsx       # 게시물 상세 보기
 ├── PostItem.tsx         # 게시물 항목
 ├── PostList.tsx         # 게시물 목록
 ├── Sidebar.tsx          # 사이드바 컴포넌트
-├── TrafficLights.tsx    # 창 제어 버튼 (최소화, 최대화, 닫기)
+├── WindowControls.tsx   # 창 제어 버튼 (최소화, 최대화, 닫기)
 ├── WindowMenuBar.tsx    # 창 메뉴 바
 └── icons.tsx            # 아이콘 컴포넌트
 ```

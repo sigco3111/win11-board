@@ -1,6 +1,6 @@
 /**
  * 데스크톱 화면을 표현하는 컴포넌트
- * macOS 스타일의 데스크톱 환경을 제공합니다.
+ * win11 스타일의 데스크톱 환경을 제공합니다.
  */
 import React, { useState, useEffect } from 'react';
 import MenuBar from './MenuBar';

@@ -1,7 +1,7 @@
 {
-  "name": "macos-style-bulletin-board",
+  "name": "win11-style-bulletin-board",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
