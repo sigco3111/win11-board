@@ -46,7 +46,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
     >
       <div 
         className={`bg-white/80 backdrop-blur-xl flex flex-col overflow-hidden
-          ${isMaximized ? 'w-full h-full rounded-none' : 'w-full max-w-lg m-4 rounded-xl shadow-win11-window border border-slate-200/80'}`}
+          ${isMaximized ? 'w-full h-full rounded-none' : 'w-full max-w-lg max-h-[80vh] m-4 rounded-xl shadow-win11-window border border-slate-200/80'}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 헤더 */}
