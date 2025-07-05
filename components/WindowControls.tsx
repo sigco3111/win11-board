@@ -17,10 +17,10 @@ const WindowControls: React.FC<WindowControlsProps> = ({
     <div className="flex items-center">
       {/* Windows 11 스타일 창 제어 버튼 - 오른쪽 정렬 */}
       <div className="flex">
-        {/* 최소화 버튼 */}
+        {/* 최소화 버튼 - 클릭 시 창 닫기 */}
         <button 
           aria-label="Minimize window"
-          onClick={onMinimize}
+          onClick={onClose}
           className="w-11 h-8 flex items-center justify-center hover:bg-win11-gray/80 transition-colors duration-150 focus:outline-none"
         >
           <svg width="10" height="1" viewBox="0 0 10 1" fill="none" xmlns="http://www.w3.org/2000/svg">
