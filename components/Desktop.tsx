@@ -5,12 +5,11 @@
 import React, { useState, useEffect } from 'react';
 import Taskbar from './Taskbar';
 import StartMenu from './StartMenu';
-import { FolderIcon, SettingsIcon, UserIcon } from './icons';
+import { FolderIcon, SettingsIcon } from './icons';
 import HelpModal from './HelpModal';
 import BulletinBoard from './BulletinBoard';
 import { User } from '../types';
 import SettingsModal from './SettingsModal';
-import UserProfile from './UserProfile';
 
 // 로그아웃 상태를 저장하기 위한 로컬 스토리지 키
 const LOGOUT_FLAG_KEY = 'win11_board_force_logout';
@@ -43,7 +42,6 @@ const Desktop: React.FC<DesktopProps> = ({ user, onOpenBoard, onLogout }) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isHelpModalOpen, setHelpModalOpen] = useState(false);
   const [isSettingsModalOpen, setSettingsModalOpen] = useState(false);
-  const [isUserProfileOpen, setUserProfileOpen] = useState(false); // 사용자 프로필 모달 상태 추가
   const [isStartMenuOpen, setStartMenuOpen] = useState(false);
   const [boardState, setBoardState] = useState<BoardState>('closed');
   const [wallpaper, setWallpaper] = useState<string>(() => {
@@ -69,7 +67,6 @@ const Desktop: React.FC<DesktopProps> = ({ user, onOpenBoard, onLogout }) => {
     { id: 'bulletin-board', name: '게시판', Icon: FolderIcon, onOpen: () => setBoardState('board'), color: 'text-win11-blue' },
     { id: 'bookmark', name: '북마크', Icon: FolderIcon, onOpen: () => setBoardState('bookmarks'), color: 'text-win11-blue' },
     { id: 'settings', name: '설정', Icon: SettingsIcon, onOpen: () => setSettingsModalOpen(true), color: 'text-gray-600' },
-    { id: 'profile', name: '프로필', Icon: UserIcon, onOpen: () => setUserProfileOpen(true), color: 'text-green-600' }, // 프로필 아이콘 추가
   ];
 
   const handleCloseBoard = () => {
@@ -101,12 +98,6 @@ const Desktop: React.FC<DesktopProps> = ({ user, onOpenBoard, onLogout }) => {
 
   const handleStartMenuToggle = () => {
     setStartMenuOpen(!isStartMenuOpen);
-  };
-
-  // 프로필 업데이트 핸들러
-  const handleProfileUpdated = () => {
-    // 프로필이 업데이트되면 필요한 작업 수행
-    console.log('프로필이 업데이트되었습니다.');
   };
 
   useEffect(() => {
@@ -167,7 +158,6 @@ const Desktop: React.FC<DesktopProps> = ({ user, onOpenBoard, onLogout }) => {
         user={user}
         onStartMenuToggle={handleStartMenuToggle}
         isStartMenuOpen={isStartMenuOpen}
-        onOpenUserProfile={() => setUserProfileOpen(true)} // 사용자 프로필 열기 핸들러 추가
       />
 
       {/* 시작 메뉴 */}
@@ -176,7 +166,6 @@ const Desktop: React.FC<DesktopProps> = ({ user, onOpenBoard, onLogout }) => {
         onClose={() => setStartMenuOpen(false)}
         user={user}
         onLogout={handleLogout}
-        onOpenUserProfile={() => setUserProfileOpen(true)} // 사용자 프로필 열기 핸들러 추가
       />
 
       {/* 모달 컴포넌트들 */}
@@ -193,13 +182,6 @@ const Desktop: React.FC<DesktopProps> = ({ user, onOpenBoard, onLogout }) => {
           onClose={handleCloseBoard}
           user={user}
           initialShowBookmarks={boardState === 'bookmarks'}
-        />
-      )}
-      {isUserProfileOpen && (
-        <UserProfile
-          user={user}
-          onClose={() => setUserProfileOpen(false)}
-          onProfileUpdated={handleProfileUpdated}
         />
       )}
     </div>

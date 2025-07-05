@@ -7,10 +7,9 @@ interface StartMenuProps {
   onClose: () => void;
   user: User;
   onLogout: () => void;
-  onOpenUserProfile: () => void; // 사용자 프로필 열기 핸들러 추가
 }
 
-const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, user, onLogout, onOpenUserProfile }) => {
+const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, user, onLogout }) => {
   const menuRef = useRef<HTMLDivElement>(null);
 
   // 외부 클릭 감지
@@ -48,7 +47,7 @@ const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, user, onLogout, 
   // 추천 항목 목록
   const recommendedItems = [
     { name: '최근 게시물', icon: '📄', time: '방금 전' },
-    { name: '프로필 설정', icon: '👤', time: '1시간 전', onClick: onOpenUserProfile }, // 프로필 설정에 핸들러 추가
+    { name: '설정', icon: '⚙️', time: '1시간 전' },
     { name: '알림 센터', icon: '🔔', time: '3시간 전' },
     { name: '도움말', icon: '❓', time: '어제' },
   ];
@@ -74,16 +73,12 @@ const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, user, onLogout, 
           
           <div className="flex items-center">
             <div 
-              className="w-8 h-8 rounded-full bg-win11-blue flex items-center justify-center text-white mr-2 cursor-pointer hover:bg-blue-600 transition-colors"
-              onClick={onOpenUserProfile} // 프로필 이미지 클릭 시 프로필 열기
+              className="w-8 h-8 rounded-full bg-win11-blue flex items-center justify-center text-white mr-2"
             >
               {user.displayName.charAt(0).toUpperCase()}
             </div>
             <div>
-              <div 
-                className="font-medium cursor-pointer hover:text-win11-blue transition-colors"
-                onClick={onOpenUserProfile} // 사용자 이름 클릭 시 프로필 열기
-              >
+              <div className="font-medium">
                 {user.displayName}
               </div>
               <button 
@@ -122,7 +117,6 @@ const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, user, onLogout, 
               <div 
                 key={index} 
                 className="flex items-center p-2 rounded-win11 hover:bg-white/50 transition-colors cursor-pointer"
-                onClick={item.onClick} // 클릭 핸들러 추가
               >
                 <div className="w-10 h-10 bg-gray-100 rounded-win11 flex items-center justify-center text-xl mr-3">
                   {item.icon}

@@ -8,7 +8,6 @@ interface TaskbarProps {
   user: User;
   onStartMenuToggle: () => void;
   isStartMenuOpen: boolean;
-  onOpenUserProfile: () => void; // 사용자 프로필 열기 핸들러 추가
 }
 
 const Taskbar: React.FC<TaskbarProps> = ({ 
@@ -16,8 +15,7 @@ const Taskbar: React.FC<TaskbarProps> = ({
   onLogout, 
   user, 
   onStartMenuToggle,
-  isStartMenuOpen,
-  onOpenUserProfile // 사용자 프로필 열기 핸들러 추가
+  isStartMenuOpen
 }) => {
   const [time, setTime] = useState(new Date());
   const [date, setDate] = useState('');
@@ -114,9 +112,8 @@ const Taskbar: React.FC<TaskbarProps> = ({
         {/* 사용자 정보 */}
         <div className="flex items-center space-x-1 px-2">
           <button 
-            onClick={onOpenUserProfile} // 사용자 프로필 열기 핸들러 추가
             className="w-6 h-6 rounded-full bg-win11-blue flex items-center justify-center text-xs text-white hover:bg-blue-600 transition-colors"
-            title="프로필 보기"
+            title="사용자 정보"
           >
             {user.displayName.charAt(0).toUpperCase()}
           </button>
