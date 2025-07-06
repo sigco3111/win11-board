@@ -51,6 +51,11 @@ const Taskbar: React.FC<TaskbarProps> = ({
     };
   }, []);
 
+  // 외부 웹사이트 열기 핸들러
+  const handleOpenExternalSite = (url: string) => {
+    window.open(url, '_blank');
+  };
+
   return (
     <div 
       ref={taskbarRef}
@@ -93,6 +98,30 @@ const Taskbar: React.FC<TaskbarProps> = ({
         >
           <div className="text-white">
             <FolderIcon className="w-5 h-5" />
+          </div>
+        </button>
+        
+        {/* AI 테크 허브 아이콘 */}
+        <button 
+          onClick={() => handleOpenExternalSite('https://tech-toolkit-hub.vercel.app/')}
+          className="p-1.5 rounded-md hover:bg-white/10 transition-colors flex items-center justify-center"
+          aria-label="AI 테크 허브"
+          title="AI 테크 허브"
+        >
+          <div className="text-white">
+            <span className="text-xl">🤖</span>
+          </div>
+        </button>
+        
+        {/* 데브캔버스 아이콘 */}
+        <button 
+          onClick={() => handleOpenExternalSite('https://dev-canvas-pi.vercel.app/')}
+          className="p-1.5 rounded-md hover:bg-white/10 transition-colors flex items-center justify-center"
+          aria-label="데브캔버스"
+          title="데브캔버스"
+        >
+          <div className="text-white">
+            <span className="text-xl">🎨</span>
           </div>
         </button>
         

@@ -105,10 +105,7 @@ const LoginScreen: React.FC = () => {
                 <UserIcon className="w-16 h-16 text-slate-600" />
               )}
             </button>
-            <span className="text-white font-semibold text-lg" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>게스트</span>
-            <span className="text-white/80 text-xs mt-1" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-              (기능 제한)
-            </span>
+            <span className="text-white font-semibold text-lg" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>게스트</span>            
           </div>
         </div>
         

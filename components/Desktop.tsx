@@ -63,6 +63,11 @@ const Desktop: React.FC<DesktopProps> = ({ user, onOpenBoard, onLogout }) => {
     }
   }, [wallpaper]);
 
+  // 외부 웹사이트 열기 핸들러
+  const handleOpenExternalSite = (url: string) => {
+    window.open(url, '_blank');
+  };
+
   const desktopItems = [
     { id: 'bulletin-board', name: '게시판', Icon: FolderIcon, onOpen: () => setBoardState('board'), color: 'text-win11-blue' },
     { id: 'bookmark', name: '북마크', Icon: FolderIcon, onOpen: () => setBoardState('bookmarks'), color: 'text-win11-blue' },

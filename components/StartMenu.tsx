@@ -43,6 +43,12 @@ const StartMenu: React.FC<StartMenuProps> = ({
     onClose();
   };
 
+  // 외부 웹사이트 열기 핸들러
+  const handleOpenExternalSite = (url: string) => {
+    window.open(url, '_blank');
+    onClose();
+  };
+
   // 시작 메뉴가 닫혀있으면 렌더링하지 않음
   if (!isOpen) return null;
 
@@ -50,6 +56,8 @@ const StartMenu: React.FC<StartMenuProps> = ({
   const pinnedApps = [
     { name: '게시판', icon: '📝', color: 'bg-blue-100', onClick: onOpenBoard },
     { name: '북마크', icon: '🔖', color: 'bg-yellow-100', onClick: onOpenBookmarks },
+    { name: 'AI 테크 허브', icon: '🤖', color: 'bg-purple-100', onClick: () => handleOpenExternalSite('https://tech-toolkit-hub.vercel.app/') },
+    { name: '데브캔버스', icon: '🎨', color: 'bg-green-100', onClick: () => handleOpenExternalSite('https://dev-canvas-pi.vercel.app/') },
   ];
 
   // 추천 항목 목록 (기능 있는 것만 유지)
