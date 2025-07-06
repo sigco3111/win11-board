@@ -11,8 +11,8 @@ import BulletinBoard from './BulletinBoard';
 import { User } from '../types';
 import SettingsModal from './SettingsModal';
 
-// 로그아웃 상태를 저장하기 위한 로컬 스토리지 키
-const LOGOUT_FLAG_KEY = 'win11_board_force_logout';
+// 더 이상 사용하지 않는 로컬 스토리지 키 제거
+// const LOGOUT_FLAG_KEY = 'win11_board_force_logout';
 // 배경화면 저장을 위한 로컬 스토리지 키
 const WALLPAPER_KEY = 'win11_board_wallpaper';
 const WALLPAPER_TYPE_KEY = 'win11_board_wallpaper_type';
@@ -87,12 +87,14 @@ const Desktop: React.FC<DesktopProps> = ({ user, onOpenBoard, onLogout }) => {
   };
 
   const handleLogout = async () => {
-    localStorage.setItem(LOGOUT_FLAG_KEY, 'true');
+    // 더 이상 로컬 스토리지 플래그를 사용하지 않음
+    // localStorage.setItem(LOGOUT_FLAG_KEY, 'true');
     try {
       await onLogout();
     } catch (error) {
       console.error('Desktop: 로그아웃 오류:', error);
-      localStorage.setItem(LOGOUT_FLAG_KEY, 'true');
+      // 더 이상 로컬 스토리지 플래그를 사용하지 않음
+      // localStorage.setItem(LOGOUT_FLAG_KEY, 'true');
     }
   };
 
@@ -115,6 +117,8 @@ const Desktop: React.FC<DesktopProps> = ({ user, onOpenBoard, onLogout }) => {
     setSettingsModalOpen(true);
   };
 
+  // 자동 로그아웃을 유발하는 불필요한 useEffect 제거
+  /*
   useEffect(() => {
     const checkLogoutFlag = () => {
       if (localStorage.getItem(LOGOUT_FLAG_KEY) === 'true') {
@@ -124,6 +128,7 @@ const Desktop: React.FC<DesktopProps> = ({ user, onOpenBoard, onLogout }) => {
     const interval = setInterval(checkLogoutFlag, 1000);
     return () => clearInterval(interval);
   }, [onLogout]);
+  */
 
   const bgStyle = defaultImageError || (wallpaper === DEFAULT_WALLPAPER && defaultImageError) ?
     { backgroundColor: FALLBACK_BG_COLOR } :

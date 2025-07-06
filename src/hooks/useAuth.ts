@@ -16,7 +16,7 @@ import {
 import type { User } from '../types';
 
 // 인증 관련 상수
-const LOGOUT_FLAG_KEY = 'mac_board_force_logout';
+// const LOGOUT_FLAG_KEY = 'mac_board_force_logout'; // 이중 상태 관리 문제로 제거
 const AUTH_ERROR_MESSAGES = {
   default: '인증 중 오류가 발생했습니다. 다시 시도해 주세요.',
   network: '네트워크 연결을 확인하고 다시 시도해 주세요.',
@@ -32,23 +32,10 @@ const AUTH_ERROR_MESSAGES = {
  */
 export function useAuth() {
   // 초기 상태 설정
-  const [user, setUser] = useState<User | null>(() => {
-    // 로그아웃 플래그 확인
-    const isForceLogout = localStorage.getItem(LOGOUT_FLAG_KEY) === 'true';
-    if (isForceLogout) {
-      console.log('강제 로그아웃 플래그 발견, 사용자 상태 null로 초기화');
-      return null;
-    }
-    
-    // 초기 상태는 로컬 스토리지에서 가져옴
-    const { isLoggedIn, user } = getAuthState();
-    return isLoggedIn && user ? user : null;
-  });
+  const [user, setUser] = useState<User | null>(null);
+  // 초기 로딩 상태는 true로 설정하여, onAuthStateChanged가 처음 실행될 때까지 로딩 화면을 표시하도록 함
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  
-  // 강제 로그아웃 상태 확인
-  const isForceLogout = localStorage.getItem(LOGOUT_FLAG_KEY) === 'true';
   
   /**
    * 에러 메시지 포맷 함수
@@ -72,45 +59,22 @@ export function useAuth() {
   useEffect(() => {
     console.log('Auth 상태 감지 설정');
     
-    // 로그아웃이 강제로 설정된 경우 인증 상태 감지를 설정하지 않음
-    if (isForceLogout) {
-      console.log('강제 로그아웃 상태, Firebase 인증 상태 감지 건너뜀');
-      setUser(null);
-      setIsLoading(false);
-      return () => {};
-    }
-    
     const unsubscribe = onAuthStateChanged(
       auth,
       (firebaseUser) => {
         console.log('Firebase 인증 상태 변경 감지:', firebaseUser ? '로그인됨' : '로그아웃됨');
         
-        // 로그아웃 플래그 확인
-        const isForceLogoutNow = localStorage.getItem(LOGOUT_FLAG_KEY) === 'true';
-        if (isForceLogoutNow) {
-          console.log('강제 로그아웃 플래그 발견, 사용자 상태 null로 설정');
-          setUser(null);
-          setIsLoading(false);
-          return;
-        }
-        
-        setIsLoading(true);
+        // onAuthStateChanged는 비동기적으로 작동하므로, 여기서 로딩 상태를 직접 제어할 필요가 없음
         if (firebaseUser) {
           // 사용자 정보 매핑
           const mappedUser = mapFirebaseUserToUser(firebaseUser);
           setUser(mappedUser);
           console.log('사용자 정보 설정됨:', mappedUser.displayName);
         } else {
-          // Firebase 사용자가 null이면, 로컬 스토리지 체크
-          const { isLoggedIn, user: storedUser } = getAuthState();
-          if (isLoggedIn && storedUser) {
-            console.log('로컬 스토리지에서 사용자 정보 복원:', storedUser.displayName);
-            setUser(storedUser);
-          } else {
-            console.log('사용자 정보 null로 설정');
-            setUser(null);
-          }
+          console.log('사용자 정보 null로 설정');
+          setUser(null);
         }
+        // onAuthStateChanged가 한번 실행되면, 초기 인증 상태 확인이 완료된 것이므로 로딩 상태를 false로 변경
         setIsLoading(false);
         setError(null);
       },
@@ -126,7 +90,7 @@ export function useAuth() {
       console.log('Auth 상태 감지 해제');
       unsubscribe();
     };
-  }, [isForceLogout, formatErrorMessage]);
+  }, [formatErrorMessage]);
 
   /**
    * 구글 로그인 함수
@@ -134,16 +98,12 @@ export function useAuth() {
    */
   const signInWithGoogle = async (): Promise<User | null> => {
     try {
-      // 로그아웃 플래그 제거
-      localStorage.removeItem(LOGOUT_FLAG_KEY);
-      
+      // 로그인 시도 시에는 로딩 상태를 true로 설정하여 UI 피드백을 줌
       setIsLoading(true);
       setError(null);
       const user = await signInWithGoogleService();
-      if (user) {
-        setUser(user);
-      }
-      setIsLoading(false);
+      // onAuthStateChanged가 user 상태를 설정하므로, 여기서 별도로 setUser를 호출할 필요가 없음
+      // 로딩 상태는 onAuthStateChanged 콜백에서 관리
       return user;
     } catch (err: any) {
       console.error('구글 로그인 오류:', err);
@@ -168,16 +128,12 @@ export function useAuth() {
    */
   const signInAnonymously = async (): Promise<User | null> => {
     try {
-      // 로그아웃 플래그 제거
-      localStorage.removeItem(LOGOUT_FLAG_KEY);
-      
+      // 로그인 시도 시에는 로딩 상태를 true로 설정하여 UI 피드백을 줌
       setIsLoading(true);
       setError(null);
       const user = await signInAnonymouslyService();
-      if (user) {
-        setUser(user);
-      }
-      setIsLoading(false);
+      // onAuthStateChanged가 user 상태를 설정하므로, 여기서 별도로 setUser를 호출할 필요가 없음
+      // 로딩 상태는 onAuthStateChanged 콜백에서 관리
       return user;
     } catch (err: any) {
       console.error('익명 로그인 오류:', err);
@@ -193,25 +149,17 @@ export function useAuth() {
   const signOut = async (): Promise<void> => {
     try {
       console.log('useAuth: 로그아웃 시작');
-      
-      // 강제 로그아웃 플래그 설정
-      localStorage.setItem(LOGOUT_FLAG_KEY, 'true');
-      
+      // 로그아웃 시도 시에도 로딩 상태를 true로 설정
       setIsLoading(true);
-      console.log('useAuth: signOutService 호출');
       await signOutService();
-      console.log('useAuth: Firebase 로그아웃 성공');
+      // onAuthStateChanged가 user를 null로 설정하지만, 즉각적인 UI 반응을 위해 여기서도 설정
       setUser(null);
-      console.log('useAuth: 사용자 정보 초기화');
-      setError(null);
       console.log('useAuth: 로그아웃 완료');
     } catch (err) {
       console.error('useAuth: 로그아웃 오류:', err);
       setError(formatErrorMessage(err));
-      
       // 오류가 발생해도 강제로 로그아웃
       setUser(null);
-      localStorage.setItem(LOGOUT_FLAG_KEY, 'true');
     } finally {
       setIsLoading(false);
     }
@@ -226,7 +174,7 @@ export function useAuth() {
 
   return {
     user,
-    isAuthenticated: !!user && !isForceLogout,
+    isAuthenticated: !!user, // user 객체의 존재 여부로 인증 상태를 결정
     isLoading,
     error,
     signInWithGoogle,

@@ -2,14 +2,13 @@
  * 애플리케이션 진입점 컴포넌트
  * 전체 앱의 레이아웃과 라우팅을 관리합니다.
  */
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import Desktop from '../components/Desktop';
 import LoginScreen from '../components/LoginScreen';
 import { useAuth } from './hooks/useAuth';
-import { useAdminAuth } from './hooks/useAdminAuth';
 import AdminLayout from './components/admin/AdminLayout';
 // 실제 구현된 관리자 게시물 관리 컴포넌트 임포트
 import AdminPosts from './components/admin/posts';
@@ -19,12 +18,8 @@ import CategoryManagement from './components/admin/categories';
 import BackupRestorePage from './components/admin/backup/BackupRestorePage';
 import './index.css';
 
-// 로그아웃 상태를 저장하기 위한 로컬 스토리지 키
-const LOGOUT_FLAG_KEY = 'mac_board_force_logout';
-
 /**
  * 어드민 대시보드 페이지 컴포넌트
- * 실제 구현은 별도 파일로 분리할 예정입니다.
  */
 const AdminDashboard: React.FC = () => (
   <AdminLayout title="대시보드">
@@ -33,27 +28,12 @@ const AdminDashboard: React.FC = () => (
   </AdminLayout>
 );
 
-// 임시 AdminBackup 컴포넌트 제거
-
 /**
  * 애플리케이션 루트 컴포넌트
  */
 const App: React.FC = () => {
-  // 일반 사용자 인증 상태 관리
+  // 인증 상태를 useAuth 훅에서 직접 가져옴
   const { user, isLoading, error, isAuthenticated, signOut } = useAuth();
-  const [manualLoginUser, setManualLoginUser] = useState<any>(null);
-  const [forceLogout, setForceLogout] = useState<boolean>(() => {
-    return localStorage.getItem(LOGOUT_FLAG_KEY) === 'true';
-  });
-
-  // 강제 로그아웃 상태가 변경될 때 로컬 스토리지에 저장
-  useEffect(() => {
-    if (forceLogout) {
-      localStorage.setItem(LOGOUT_FLAG_KEY, 'true');
-    } else {
-      localStorage.removeItem(LOGOUT_FLAG_KEY);
-    }
-  }, [forceLogout]);
   
   // 로딩 화면
   if (isLoading) {
@@ -96,47 +76,22 @@ const App: React.FC = () => {
 
   /**
    * 로그아웃 핸들러
+   * useAuth의 signOut 함수를 직접 호출합니다.
    */
   const handleLogout = async () => {
     console.log('App: 로그아웃 요청 받음');
-    
-    // 로그아웃 상태로 강제 설정
-    setForceLogout(true);
-    setManualLoginUser(null);
-    
-    // useAuth의 signOut 함수 호출
     try {
-      console.log('App: useAuth의 signOut 함수 호출');
       await signOut();
-      console.log('App: 로그아웃 완료, 강제 로그아웃 상태 설정됨');
+      console.log('App: 로그아웃 완료');
     } catch (err) {
       console.error('App: 로그아웃 실패', err);
     }
-    
-    // Promise를 반환
-    return Promise.resolve();
   };
-
-  /**
-   * 로그인 핸들러
-   */
-  const handleLogin = (loggedInUser: any) => {
-    console.log('로그인 성공:', loggedInUser);
-    setManualLoginUser(loggedInUser);
-    setForceLogout(false);
-    localStorage.removeItem(LOGOUT_FLAG_KEY);
-  };
-
-  // 로그인 상태 확인
-  const effectiveUser = user || manualLoginUser;
-  const isUserLoggedIn = (isAuthenticated || !!manualLoginUser) && !forceLogout;
 
   console.log('인증 상태:', { 
     user, 
-    manualLoginUser, 
     isAuthenticated, 
-    forceLogout, 
-    isUserLoggedIn 
+    isLoading
   });
 
   return (
@@ -151,16 +106,17 @@ const App: React.FC = () => {
         
         {/* 메인 앱 라우트 */}
         <Route path="/" element={
-          isUserLoggedIn && effectiveUser ? (
+          isAuthenticated && user ? (
             // 로그인 상태 - 데스크톱 환경 표시
             <Desktop 
-              user={effectiveUser} 
+              user={user} 
               onOpenBoard={handleOpenBoard} 
               onLogout={handleLogout} 
             />
           ) : (
             // 로그아웃 상태 - 로그인 화면 표시
-            <LoginScreen onLogin={handleLogin} />
+            // LoginScreen은 이제 내부적으로 useAuth를 사용
+            <LoginScreen />
           )
         } />
         

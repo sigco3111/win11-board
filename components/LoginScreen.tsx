@@ -3,18 +3,14 @@ import { GoogleIcon, UserIcon } from './icons';
 import { useAuth } from '../src/hooks/useAuth';
 import type { User } from '../types';
 
-interface LoginScreenProps {
-  onLogin: (user: User) => void;
-}
-
 /**
  * 로그인 화면 컴포넌트
  * Google 로그인 및 게스트 로그인 기능을 제공
- * @param onLogin 로그인 성공 시 호출되는 콜백 함수
  */
-const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
+const LoginScreen: React.FC = () => {
   const [time, setTime] = useState(new Date());
-  const { signInWithGoogle, signInAnonymously, isLoading, error, user } = useAuth();
+  // onLogin 콜백이 제거되었으므로, user 객체는 더 이상 여기서 직접 사용하지 않습니다.
+  const { signInWithGoogle, signInAnonymously, isLoading, error } = useAuth();
   const [loginError, setLoginError] = useState<string | null>(null);
 
   // 시계 업데이트를 위한 타이머 설정
@@ -32,27 +28,17 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     }
   }, [error]);
 
-  // 사용자 로그인 상태 변경 감지 및 처리
-  useEffect(() => {
-    if (user) {
-      console.log('사용자 로그인 감지:', user);
-      onLogin(user);
-    }
-  }, [user, onLogin]);
-
   /**
    * Google 로그인 처리 함수
    * Google 계정을 통한 인증을 수행
    */
   const handleGoogleLogin = async () => {
     try {
-      const result = await signInWithGoogle();
-      if (result) {
-        console.log('구글 로그인 성공:', result);
-        onLogin(result);
-      }
+      // signInWithGoogle 호출. App.tsx가 useAuth 훅을 통해 상태 변경을 감지.
+      await signInWithGoogle();
     } catch (err) {
       console.error('구글 로그인 처리 중 오류:', err);
+      // 에러 처리는 useAuth 훅 내부 및 이 컴포넌트의 useEffect에서 처리됩니다.
     }
   };
   
@@ -64,21 +50,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   const handleGuestLogin = async () => {
     try {
       if (signInAnonymously) {
-        // Firebase 익명 인증 사용
-        const result = await signInAnonymously();
-        if (result) {
-          console.log('게스트 로그인 성공:', result);
-          onLogin(result);
-        }
+        // Firebase 익명 인증 사용. App.tsx가 useAuth 훅을 통해 상태 변경을 감지.
+        await signInAnonymously();
       } else {
-        // Firebase가 없는 경우 임시 게스트 사용자 생성
-        const guestUser = {
-          uid: 'guest-' + Math.random().toString(36).substring(2, 15),
-          displayName: '게스트',
-          isAnonymous: true
-        };
-        console.log('임시 게스트 로그인 생성:', guestUser);
-        onLogin(guestUser);
+        // Firebase가 없는 대체 로직은 현재 아키텍처에서 사용되지 않으므로,
+        // 이 부분은 향후 검토 후 제거하거나 수정할 수 있습니다.
+        console.warn('Firebase 익명 인증을 사용할 수 없습니다.');
+        setLoginError('게스트 로그인을 현재 사용할 수 없습니다.');
       }
     } catch (err) {
       console.error('게스트 로그인 처리 중 오류:', err);
