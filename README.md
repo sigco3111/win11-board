@@ -5,7 +5,7 @@
 
 WIN11-BOARD는 Windows 11 인터페이스에서 영감을 받은 온라인 게시판 시스템입니다. 사용자들은 다양한 주제에 대한 게시물을 작성하고, 공유하며 커뮤니티를 형성할 수 있습니다. 데스크톱 환경을 시뮬레이션하는 UI를 통해 친숙하고 직관적인 사용자 경험을 제공합니다.
 
-실행주소1 : https://mac-board.vercel.app/
+실행주소1 : https://win11-board.vercel.app/
 
 실행주소2 : https://dev-canvas-pi.vercel.app/
 
